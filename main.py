@@ -22,9 +22,9 @@ app.add_middleware(
 )
 
 class Item(BaseModel):
-	id: int
+	key: int
 	text: str
-	isDone: bool=False
+	done: bool=False
 
 @app.get('/')
 def root():
@@ -35,10 +35,10 @@ def create_todo(item: Item):
 	todos.append(dict(item))
 	return item
 
-@app.get('/{id}')
-def item(id: int):
+@app.get('/{key}')
+def item(key: int):
 	try:
-		data = list(filter(lambda i: i["id"] == id, todos))[0]
+		data = list(filter(lambda i: i["key"] == key, todos))[0]
 	except IndexError:
 		raise HTTPException(detail="todo not found", status_code=404)
 	except:
@@ -46,10 +46,10 @@ def item(id: int):
 	return data
 
 
-@app.put('/{id}')
-def item(id: int, item: Item):
+@app.put('/{key}')
+def item(key: int, item: Item):
 	try:
-		filtered = list(filter(lambda i: i["id"] == id, todos))[0]
+		filtered = list(filter(lambda i: i["key"] == key, todos))[0]
 		index = todos.index(filtered)
 		todos[index] = dict(item)
 	except IndexError:
@@ -61,10 +61,10 @@ def item(id: int, item: Item):
 
 
 
-@app.delete('/{id}', status_code=204)
-def item(id: int):
+@app.delete('/{key}', status_code=204)
+def item(key: int):
 	try:
-		filtered = list(filter(lambda i: i["id"] == id, todos))[0]
+		filtered = list(filter(lambda i: i["key"] == key, todos))[0]
 		index = todos.index(filtered)
 		del todos[index]
 		return HTTPException(detail="something went wrong", status_code=201)
